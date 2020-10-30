@@ -35,6 +35,7 @@ class DataStore {
       let collection = await this.collection();
       console.log("Inserting item...")
       await collection.insertOne(object);
+      // console.log(result.ops[0]);
       console.log("Item successfully added");
       response.status = "ok"
     } catch (error) {
