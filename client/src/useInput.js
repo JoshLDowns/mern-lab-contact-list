@@ -10,8 +10,11 @@ export const useInput = (initialValue) => {
     bind: {
       value,
       onChange: (event) => {
-        setValue(event.target.value)
+        if (event.target.value.length <= 300) {
+          setValue(event.target.value)
+        }
       }
     }
   }
 }
+

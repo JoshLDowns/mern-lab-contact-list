@@ -1,31 +1,43 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import EditModal from "./EditModal";
+import ContactCard from "./ContactCard";
 
 import { useInput } from "./useInput";
 
 function App() {
   const [contacts, setContacts] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [modal, setModal] = useState(false);
+  const [currentId, setCurrentId] = useState(null);
   const { value: name, bind: bindName, reset: resetName } = useInput("");
   const { value: phone, bind: bindPhone, reset: resetPhone } = useInput("");
   const { value: email, bind: bindEmail, reset: resetEmail } = useInput("");
 
+  const handleClose = () => {
+    setModal(false);
+  };
+
   const handleDelete = (event) => {
-    console.log(event.target.id)
-    fetch(`/contacts/${event.target.id}`, {
+    fetch(`/contacts/${event.target.parentElement.id}`, {
       method: "DELETE",
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-    .then(res => res.json())
-    .then(contacts => {
-      setContacts(contacts)
-    })
-  }
+      .then((res) => res.json())
+      .then((contacts) => {
+        setContacts(contacts);
+      });
+  };
+
+  const handleEdit = (event) => {
+    setCurrentId(event.target.parentElement.id);
+    setModal(true);
+  };
 
   const handleForm = (event) => {
     event.preventDefault();
-    console.log(name, phone, email);
     let postBody = {
       contact: {
         name: name,
@@ -42,7 +54,7 @@ function App() {
     })
       .then((res) => res.json())
       .then((contacts) => {
-        setContacts(contacts)
+        setContacts(contacts);
         resetName();
         resetPhone();
         resetEmail();
@@ -51,35 +63,59 @@ function App() {
 
   useEffect(() => {
     if (!contacts) {
+      setIsLoading(true);
       fetch("/contacts")
         .then((res) => res.json())
         .then((contacts) => {
           setContacts(contacts);
+          setIsLoading(false);
         });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div id="main-wrapper">
+      {modal && (
+        <EditModal
+          id={currentId}
+          setContacts={setContacts}
+          handleClose={handleClose}
+        />
+      )}
       <h1>Contacts</h1>
-      <form id="contact-form" onSubmit={handleForm}>
-        <input placeholder="Name" id="name" {...bindName} />
-        <input placeholder="Phone" id="phone" {...bindPhone} />
-        <input placeholder="Email" id="email" {...bindEmail} />
+      <form className="contact-form" onSubmit={handleForm}>
+        <input
+          className="form-input"
+          placeholder="Name"
+          id="name"
+          {...bindName}
+        />
+        <input
+          className="form-input"
+          placeholder="Phone"
+          id="phone"
+          {...bindPhone}
+        />
+        <input
+          className="form-input"
+          placeholder="Email"
+          id="email"
+          {...bindEmail}
+        />
         <button type="submit">Submit</button>
       </form>
-      {contacts ? (
+      {contacts && contacts.length > 0 ? (
         contacts.map((contact) => (
-          <div className="contact" key={contact._id}>
-            <button id={contact._id} className="delete" onClick={handleDelete}>X</button>
-            <p>{contact.name}</p>
-            <p>{contact.phone}</p>
-            <p>{contact.email}</p>
-          </div>
+          <ContactCard
+            key={contact._id}
+            contact={contact}
+            handleDelete={handleDelete}
+            handleEdit={handleEdit}
+          />
         ))
       ) : (
-        <p>...loading</p>
+        <p>{isLoading ? "...loading" : "Add a contact!"}</p>
       )}
     </div>
   );

@@ -1,0 +1,57 @@
+#main-wrapper {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 500px;
+}
+
+.form-input {
+  width: 100%;
+  margin: 10px auto;
+}
+
+.contact {
+  width: 500px;
+  border-radius: 25px;
+  background-color: whitesmoke;
+  padding: 15px;
+  box-sizing: border-box;
+  margin: 10px auto;
+}
+
+.controls {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.contact-button {
+  margin-left: 10px;
+}
+
+#edit-modal {
+  position: fixed;
+  width: 550px;
+  height: 275px;
+  padding: 20px;
+  box-sizing: border-box;
+  top: Calc(50vh - 200px);
+  left: Calc(50vw - 275px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border: 5px solid black;
+  background-color: whitesmoke;
+}
+
+.close-button {
+  margin-left: 90%;
+}
